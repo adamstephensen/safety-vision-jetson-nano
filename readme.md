@@ -81,3 +81,18 @@ sys.path.append("/content/models/research/slim/")
 
 
 ```
+
+
+checking version of open cv
+https://www.pyimagesearch.com/2015/08/10/checking-your-opencv-version-using-python/
+
+install open cv on nano
+https://jkjung-avt.github.io/opencv-on-nano/
+
+
+## to test video on jetson
+```
+$ wget https://gist.githubusercontent.com/jkjung-avt/86b60a7723b97da19f7bfa3cb7d2690e/raw/9561b135c1b40f82afe46afcc1f326a2e913e08c/tegra-cam.py
+$ python3 tegra-cam.py --usb --vid 0 --width 1280 --height 720
+
+```
