@@ -1,2 +1,3 @@
-hardhat
-hivisvest
+croc
+koala
+wombat
