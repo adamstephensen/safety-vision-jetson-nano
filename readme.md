@@ -5,7 +5,7 @@ To execute
 ``` python
 
 cd python
-python3 predict.py ../hardhat.jpg
+python3 predictvid.py 
 ```
 
 ## monitor memory
