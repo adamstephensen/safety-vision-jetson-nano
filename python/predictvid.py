@@ -4,6 +4,7 @@ import numpy as np
 from PIL import Image
 from object_detection import ObjectDetection
 import cv2
+import time
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL']='1'
 
@@ -42,21 +43,34 @@ def main():
 
     cap = cv2.VideoCapture(0);
 
+    frame_rate = 1
+    prev = 0
+
+
     while (True):
+
+        time_elapsed = time.time() - prev
+        ret, image = cap.read()
+
+        
 
     # Capture frame-by-frame
         ret, frame = cap.read()
-
+        frame = cv2.resize(frame, dsize=None, fx=0.25, fy=0.25)
     # Convert from array to image, and perform predictions
-        np_im = Image.fromarray(frame)
-    
-        predictions = od_model.predict_image(np_im)
-        # print(predictions)
-        for prediction in predictions:
-            if prediction['probability'] > 0.5:
-                print(prediction)
-            #else: print("low scoring prediction")
+        if time_elapsed > 1./frame_rate:
+            prev = time.time()
 
+            np_im = Image.fromarray(frame)
+    
+            predictions = od_model.predict_image(np_im)
+        # print(predictions)
+            for prediction in predictions:
+                if prediction['probability'] > 0.5:
+                    print(prediction)
+            #else: print("low scoring prediction")
+        
+        
         # Display the resulting frame - will run out of memory on Jetson Nano
         # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) # can perform manipulation here
         # cv2.imshow('frame',frame)
@@ -64,6 +78,7 @@ def main():
         # if cv2.waitKey(1) & 0xFF == ord('q'):
             # break
     
+    cap.release()
     
 if __name__ == '__main__':
     main()
