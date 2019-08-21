@@ -4,6 +4,8 @@ import numpy as np
 from PIL import Image
 from object_detection import ObjectDetection
 import cv2
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL']='0'
 
 MODEL_FILENAME = '../model.pb'
 LABELS_FILENAME = '../labels.txt'
@@ -18,15 +20,21 @@ class TFObjectDetection(ObjectDetection):
             tf.import_graph_def(graph_def, name='')
             
     def predict(self, preprocessed_image):
+        print("aaaaa")
         inputs = np.array(preprocessed_image, dtype=np.float)[:,:,(2,1,0)] # RGB -> BGR
-
+        print("bbb")
+        
         with tf.Session(graph=self.graph) as sess:
+            print("cccc")
             output_tensor = sess.graph.get_tensor_by_name('model_outputs:0')
+            print("ddd")
             outputs = sess.run(output_tensor, {'Placeholder:0': inputs[np.newaxis,...]})
+            print("eee")
             return outputs[0]
+            print("fff")
 
 
-def main(image_filename):
+def main():
     # Load a TensorFlow model
     graph_def = tf.GraphDef()
     with tf.gfile.FastGFile(MODEL_FILENAME, 'rb') as f:
@@ -40,31 +48,36 @@ def main(image_filename):
 
     cap = cv2.VideoCapture(0);
 
-	# Old Code on single image
-    # image = Image.open(image_filename)
-
     while (True):
 
     # Capture frame-by-frame
+        print("read frame")
         ret, frame = cap.read()
 
     # Convert from array to image, and perform predictions
+        print("convert to image")
         np_im = Image.fromarray(frame)
     
+        print("predicct")
         predictions = od_model.predict_image(np_im)
         print("predictions")
-        print(predictions)
+        # print(predictions)
+        for prediction in predictions:
+            print("prediction")
+            if prediction['probability'] > 0.5:
+                print(prediction)
+            else:
+                print("low scoring prediction")
+            
 
     # Display the resulting frame
         # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) # can perform manipulation here
-        cv2.imshow('frame',frame)
+        #cv2.imshow('frame',frame)
         
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        
+        #if cv2.waitKey(1) & 0xFF == ord('q'):
+            #break
     
     
 if __name__ == '__main__':
-    if len(sys.argv) <= 1:
-        print('USAGE: {} image_filename'.format(sys.argv[0]))
-    else:
-        main(sys.argv[1])
+    main()
